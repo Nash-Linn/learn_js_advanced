@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav-wrap">
+      <!-- <div class="menu-item">菜单1
+        <div class="drop-menu">关闭所有</div>
+      </div>
+      <div class="menu-item">菜单2
+        <div class="drop-menu">关闭所有</div>
+      </div>
+      <div class="menu-item">菜单3
+        <div class="drop-menu">关闭所有</div>
+      </div>
+      <div class="menu-item">菜单4
+        <div class="drop-menu">关闭所有</div>
+      </div> -->
+    </div>
+  
+    <div class="content">
+      内容
+    </div>
+  </div>
+
+  <script>
+
+    let menu = ['菜单1','菜单2','菜单3','菜单4']
+
+    let navWrap = document.querySelector(".nav-wrap")
+
+    let menuItems = menu.map((item)=> `<div class='menu-item'>${item}</div>`)
+    navWrap.innerHTML = menuItems.join('')
+
+    let menuItemsDom =  document.querySelectorAll(".menu-item")
+    menuItemsDom.forEach(item => {
+      let dropMenu = document.createElement('div')
+      dropMenu.innerHTML = `<div class="drop-menu">关闭所有</div>`
+      item.append(dropMenu)
+    })
+ 
+  </script>
+
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    .wrap{
+      width: 100%;
+      height: 100vh;
+      position: relative;
+    }
+
+
+    .nav-wrap{
+      width:100%;
+      height:40px;
+      background-color: #ccc;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .menu-item{
+      margin: 0 20px;
+      position: relative;
+    }
+
+    .drop-menu{
+      width: 70px;
+      height: 150px;
+      background-color: #bfa;
+      position: absolute;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .content{
+      width: 100%;
+      height: calc(100vh - 40px);
+      position: relative;
+      top: 40px;
+      background-color: #eee;
+    }
+  </style>
+</body>
+</html>

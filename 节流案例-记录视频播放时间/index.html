@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="video-wrap">
+    <video src="./video.mp4" controls ></video>
+  </div>
+  <script>
+    // 节流函数
+    function throttle(func, wait) {
+      let timeout = null
+
+      return function() {
+        const context = this;
+        const args = arguments;
+
+       if(!timeout) {
+        timeout = setTimeout(function() {
+          func.apply(context, args);
+          timeout = null
+        }, wait);
+       }
+      };
+    }
+
+
+    // 1.获取元素 要对视频进行操作
+    const video = document.querySelector('video')
+    video.ontimeupdate =throttle(function(){
+      localStorage.setItem('currentTime',video.currentTime)
+    },1000) 
+
+    // 打开页面触发事件，就从本地存储里面取出记录的时间，赋值给 video.currentTime
+
+    video.onloadeddata=()=>{
+      video.currentTime = localStorage.getItem('currentTime') || 0
+    }
+
+  </script>
+  <style>
+    .video-wrap{
+      width: 400px;
+    }
+    video{
+      width: 100%;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button>按钮</button>
+
+
+  <script>
+    function fn(x,y){
+      console.log('x',x)
+      console.log('y',y)
+      console.log(this)   // window
+    }
+
+    const obj = {
+      name:'Nash'
+    }
+
+    const newFn =  fn.bind(obj,'我是x','我是y')
+    // newFn()
+
+    // 需求：有一个按钮，点击就禁用，2秒钟之后开启
+
+    const btn = document.querySelector('button')
+    btn.addEventListener('click',function () { 
+      // 禁用按钮
+      this.disabled = true
+
+      setTimeout(function () {
+        // 在这个普通函数里面，我们要this由原来的window 改为 btn
+        this.disabled = false
+      }.bind(btn), 2000);
+    })
+  </script>
+</body>
+</html>

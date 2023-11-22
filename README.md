@@ -822,3 +822,436 @@ Star.prototype = {
 };
 ```
 
+
+
+## 对象原型
+
+对象都会有一个属性  ____proto____ 指向构造函数的 prototype 原型对象，之所以我们对象可以使用构造函数 prototype 原型对象的属性和方法，就是因为对象有 ____proto____ 原型的存在
+
+注意：
+
+1.____proto____  是JS非标准属性
+
+2.[[prototype]] 和 ____proto____  意义相同
+
+3.用来表明当前实例对象指向哪个原型对象prototype
+
+4.____proto____ 对象原型里面也有一个 constructor 属性，指向创建该实例对象的构造函数
+
+
+
+
+
+## 原型继承
+
+继承是面向对象编程的另一个特征，通过继承进一步提升代码封装的程度。JS中大多是借助原型对象实现继承的特性。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function Person() {
+      this.eays = 2;
+      this.head = 1;
+    }
+
+    function Women() {
+      this.sex = 0;
+    }
+
+    Women.prototype = new Person();
+    Women.prototype.constructor = Women;
+    Women.prototype.baby = function(){
+     console.log('baby')
+    }
+
+    function Man() {
+      this.sex = 1;
+    }
+
+    Man.prototype = new Person();
+    Man.prototype.constructor = Man;
+
+    const M = new Man();
+    console.log("M", M);
+    console.log("M.eays", M.eays);
+
+    const W =  new Women()
+    console.log("W", W);
+    W.baby()
+  </script>
+</body>
+</html>
+```
+
+
+
+## 原型链
+
+基于原型对象的继承使得不同构造函数的原型对象关联在一起，并且这种关联的关系是一种链状的结构，我们将原型对象的链状结构关系称为原型链。
+
+![image-20231116154825098](README.assets/image-20231116154825098.png)
+
+### 查找规则
+
+1.当访问一个对象的属性（包括方法）时，首先查找这个对象自身有没有该属性
+
+2.如果没有就查找它的原型（也就是 ____proto____ 指向的 prototype 原型对象） 
+
+3.如果还没有就查找原型对象的原型（Object的原型对象）
+
+4.依此类推一直找到Object为止（null）
+
+5.____proto____ 对象原型的意义就在于对象成员查找机制提供一个方向，或者说一条路线
+
+6.可以使用 instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型上
+
+
+
+## 深浅拷贝
+
+首先 浅拷贝和深拷贝只针对引用类型
+
+浅拷贝：拷贝的是地址
+
+深拷贝：拷贝的是对象，不是地址
+
+
+
+常见方法：
+
+1.通过递归实现深拷贝
+
+2.loadsh/clonedDeep
+
+3.通过JSON.stringify()实现
+
+
+
+函数递归：
+
+如果一个函数在内部可以调用其本身，那么这个函数就是递归函数
+
+- 简单理解：函数内部自己调用自己，这个函数就是递归函数
+- 递归函数的作用和循环效果类似
+- 由于递归很容易发生”栈溢出“错误，所以必须要加退出条件return
+
+
+
+```js
+//利用递归函数实现 setTimeout 模拟 setInterval 效果
+/*
+  需求：
+    页面每隔一秒输出当前的时间
+    输出当前时间可以使用：new Date().toLocaleString()
+*/
+
+function getTime() {
+  let date = new Date().toLocaleString();
+  console.log("date", date);
+
+  setTimeout(getTime, 1000);
+}
+getTime();
+```
+
+
+
+简易版深拷贝
+
+```js
+function deepCopy(newObj, oldObj) {
+  for (let k in oldObj) {
+    if (oldObj[k] instanceof Array || oldObj[k] instanceof Object) {
+      newObj[k] = oldObj[k] instanceof Array ? [] : {};
+      deepCopy(newObj[k], oldObj[k]);
+    } else {
+      newObj[k] = oldObj[k];
+    }
+  }
+}
+```
+
+
+
+
+
+## 异常处理
+
+异常处理是指预估代码执行过程中可能发生的错误，然后最大程度的避免错误的发生导致整个程序无法继续运行
+
+### throw
+
+```js
+function fn(x, y) {
+  if (!x || !y) {
+    // throw "没有参数传递进来";
+    throw new Error("没有参数传递进来");
+  }
+
+  return x + y;
+}
+
+console.log(fn());
+```
+
+
+
+1.throw抛出异常信息，程序也会终止执行
+
+2.throw后面跟的是错误提示信息
+
+3.Error对象配合throw使用，能够设置更详细的错误信息
+
+
+
+### try/catch
+
+通过 try/catch 捕获错误信息（浏览器提供的错误信息）try 试试 catch 拦住 finally 最后
+
+```js
+function tryFn() {
+  try {
+    // 可能发生错误的代码 要写到 try中
+    fn();
+  } catch (error) {
+    // 拦截错误，提示浏览器提供的错误信息，但是不中断程序的执行
+    console.log("error", error.message);
+    // 需要加 return 中断程序
+    return;
+  } finally {
+    // 不管程序对不对， 一定会执行的代码
+  }
+}
+```
+
+1.try...catch 用于捕获错误信息
+
+2.将预估可能发生错误的代码写在try代码段中
+
+3.如果try代码段中出现错误后，会执行catch代码段，并截获到错误信息
+
+4.finally 不管是否错误，都会执行
+
+
+
+### debugger
+
+进行代码调试
+
+
+
+
+
+
+
+## this指向问题
+
+### 普通函数this指向
+
+普通函数的调用方式决定了this的值，即 谁调用 this 的值指向谁
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button>点击</button>
+
+
+  <script>
+    console.log('this ', this)   //window
+
+    function fn() { 
+      console.log('fn this ',this )  //window
+    }
+    
+    fn() // ==> window.fn()
+
+
+    const obj = {
+      name:'Nash',
+      foo:function(){
+        console.log('foo this ',this )  // obj
+      }
+    }
+    obj.foo()
+
+
+    document.querySelector('button').addEventListener('click',function () { 
+      console.log('btn click this ',this )  // 指向 button
+    })
+  </script>
+</body> 
+</html>
+```
+
+
+
+### 箭头函数this指向
+
+箭头函数中的 this 与普通函数完全不同，也不受调用方式的影响，事实上箭头函数中并不存在this
+
+1.箭头函数会默认帮我们绑定外层this的值，所以在箭头函数中this的值和外层的this是一样的
+
+2.箭头函数中的this引用的就是最近作用域中的this
+
+3.向外层作用域中，一层一层查找this，直到有this的定义
+
+
+
+注意情况1：
+
+在开发中 使用箭头函数前需要考虑函数中this的值，事件回调函数使用箭头函数时，this为全局的window
+
+因此DOM事件回调函数如果里面需要DOM对象的this，则不推荐使用箭头函数
+
+
+
+注意情况2：
+
+同样由于箭头函数this的原因，基于原型的面向对象也不推荐采用箭头函数
+
+
+
+### 改变this
+
+有3个方法可以动态指定普通函数中this的指向
+
+#### call()
+
+语法
+
+```
+fn.call(thisArg,arg1,arg2,...)
+```
+
+thisArg:在fn函数运行时指定的this值
+
+arg1，arg2：传递的其他参数
+
+返回值就是函数的返回值，因为它就是调用函数
+
+
+
+#### apply()
+
+语法
+
+```
+fn.call(thisArg,[argsArray])
+```
+
+thisArg:在fn函数运行时指定的this值
+
+argsArray:传递的值，必须包含在数组里面
+
+返回值就是函数的返回值，因为它就是调用函数
+
+因此apply主要跟数组有关系，比如使用 Math.max()求数组的最大值
+
+
+
+#### bind()
+
+不会去调用函数，但是能改变函数内部this指向
+
+```
+fn.bind(thisArg,arg1,arg2,...)
+```
+
+thisArg:在fn函数运行时指定的this值
+
+arg1，arg2：传递的其他参数
+
+返回由指定的this值和初始化参数改造的 原函数拷贝（新函数）
+
+因此当我们只是想改变this指向，并且不想调用这个函数的时候，可以使用bind，比如改变定时器内部的this指向
+
+
+
+#### 总结
+
+##### 相同点
+
+都可以改变函数内部的this指向
+
+##### 区别点
+
+call 和 apply 会调用函数，并且改变函数内部this指向
+
+call 和 apply 传递的参数不一样，call 传递参数 arg1，arg2,...形式，apply 必须数组形式 [args]
+
+bind 不会调用函数，可以改变函数内部 this 指向
+
+##### 主要应用场景
+
+call 调用函数并且可以传递参数
+
+apply 经常跟数组有关系，比如借助于数学对象实现数组最大值最小值
+
+bind 不调用函数，但是还想改变this指向。比如改变定时器内部的this指向
+
+
+
+
+
+## 防抖
+
+单位时间内，频繁触发事件，只执行最后一次
+
+```js
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this;
+        const args = arguments;
+        if(timeout) clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    };
+}
+```
+
+使用场景
+
+搜索框搜索输入、手机号、邮箱验证输入检测
+
+## 节流
+
+单位时间内，频繁触发事件，只执行一次
+
+```js
+function throttle(func, wait) {
+    let timeout = null
+
+    return function() {
+        const context = this;
+        const args = arguments;
+
+        if(!timeout) {
+            timeout = setTimeout(function() {
+                func.apply(context, args);
+                timeout = null
+            }, wait);
+        }
+    };
+}
+```
+
+使用场景
+
+高频事件：鼠标移动 mousemove 、页面尺寸缩放 resize、滚动条滚动 scroll 等

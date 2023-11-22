@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function fn(x,y){
+      console.log('x',x)
+      console.log('y',y)
+      console.log(this)   // window
+    }
+
+    const obj = {
+      name:'Nash'
+    }
+
+    // 1.调用函数
+    // 2.改变this指向
+    fn.call(obj,'我是x','我是y')
+
+
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function fn(x,y){
+      console.log('x',x)
+      console.log('y',y)
+      console.log(this)   // window
+    }
+
+    const obj = {
+      name:'Nash'
+    }
+
+    // 1.调用函数
+    // 2.改变this指向
+    fn.apply(obj,['我是x','我是y'])
+
+
+    // 使用场景：求数组最大值
+    const arr = [1,2,3]
+    const max =  Math.max.apply(null,arr)
+    console.log('max',max)
+
+
+
+
+  </script>
+</body>
+</html>

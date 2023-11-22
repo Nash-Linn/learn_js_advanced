@@ -15,6 +15,6 @@ Star.prototype = {
     console.log("唱歌");
   },
   dance: function () {
-    console.log("跳舞");
+    console.log("跳舞"); //
   },
 };

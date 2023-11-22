@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="box"></div>
+
+  <script>
+    // 节流函数
+    function throttle(func, wait) {
+      let timeout = null
+
+      return function() {
+        const context = this;
+        const args = arguments;
+
+       if(!timeout) {
+        timeout = setTimeout(function() {
+          func.apply(context, args);
+          timeout = null
+        }, wait);
+       }
+      };
+    }
+
+  
+
+    // 利用节流实现性能优化
+    // 需求：鼠标在盒子上移动，里面的数字就会变化 +1
+
+    const box = document.querySelector('.box')
+    let i = 1
+
+    function mouseMove (){
+      box.innerHTML = i++
+      // 如果里面存在大量消耗性能的代码，比如dom操作，比如数据处理，可能造成卡顿
+    }
+
+    // 添加事件
+    box.addEventListener('mousemove',throttle(mouseMove,500))
+
+    // 需求：鼠标在盒子上移动，每500ms，里面的数字才会变化 +1
+
+   
+
+  </script>
+
+  <style>
+    .box{
+      width: 500px;
+      height: 500px;
+      background-color: #ccc;
+      color: #fff;
+      text-align: center;
+      font-size: 100px;
+    }
+  </style>
+</body>
+</html>
